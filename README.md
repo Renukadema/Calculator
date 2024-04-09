@@ -304,11 +304,45 @@ What is PV and PVC?
 
 =======================================================================================================================
 
-
-
 NOTE :** https://www.coachdevops.com/2022/05/automate-eks-cluster-using-script-shell.html **
 
 
+-=-----------------------------========================================================================
+
+Terraform : 
+-> Hashi crop language
+-> Using Terraform we can create infra structure as a code (IAAC)
+-> Terraform will support multiple clouds like AWS, Azure, Google,........... 
+-> terraform is a globally support for any cloud, but you go to specific technology like 
+cloud formation, Aws CDK, -----(AWS)
+yaml, powershell,-----Azure cloud
+
+--> In terraform we have differnt files like main.tf, variable.tf, provider.tf, output.tf, terraform statefile........
+
+main.tf      -->which contains the resources and required configuration to create infra in cloud
+provider.tf  -->which contains the terraform version and flavour of cloud(aws, azur, gcp,......)
+vaiable.tf   -->which contains the values for the varable passed in main.tf
+output.tf    -->which contains the info of the resource you are creting in cloud.
+terraform.tfstate    --> which stores the current state of your infra. (backup)  
+             --> using this statefile we can import existing infra
+
+
+-> Download and install terraform 
+-> what are terraform commands
+    terraform inti      =>it will initilise the terraform configuration and upgrade the required dependencies and plugins
+    terraform validate  => it will validate code syntax
+    terraform plan      => it show the blue print of the resources/infra which you are going to create(pre-check/not actuall execution)
+    terraform apply     => it will actullay deploy the resources in cloud
+    terraform destory   => it will delete infra which you created.
+
+
+-> diff b/w provider and provisioner?
+-> local and remote execution ?
+-> terraform import, terraform formate, terraform data block, terraform refresh, terraform graph,......
+-> terraform workspace?
+-> terraform modules?
+
+--------------------------------------------------------------------------------------------------------------------------
 
 
 
