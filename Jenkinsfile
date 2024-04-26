@@ -32,7 +32,7 @@ pipeline {
         }
         stage('AWS Authentication') {
             steps {
-                withAWS(region: 'ap-south-1', credentials: 'aws') {
+                withAWS(region: 'us-east-1', credentials: 'aws') {
                     sh "aws eks --region us-east-1 update-kubeconfig --name dev-eks"
                 }
             }
