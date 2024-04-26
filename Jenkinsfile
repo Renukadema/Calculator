@@ -32,15 +32,15 @@ pipeline {
         }
         stage('AWS Authentication') {
             steps {
-                withAWS(region: 'ap-south-1', credentials: 'aws-credentials') {
-                    sh "aws eks --region us-east-1 update-kubeconfig --name demo-eks"
+                withAWS(region: 'ap-south-1', credentials: 'aws') {
+                    sh "aws eks --region us-east-1 update-kubeconfig --name dev-eks"
                 }
             }
         }
         stage('Kubernetes Setup') {
             steps {
                 // Use Kubernetes plugin to set up the connection to EKS
-                withKubeConfig(credentialsId: 'K8S', clusterName: 'eks', serverUrl: 'https://B5FE4869B0809F47FCBB3CAE5F9E14D8.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(credentialsId: 'K8S', clusterName: 'dev-eks', serverUrl: 'https://7C70E6F46D795C51B2A4A90732E29B22.gr7.us-east-1.eks.amazonaws.com') {
                 }
             }
         }
