@@ -37,17 +37,17 @@ pipeline {
                 }
             }
         }
-       // stage('Kubernetes Setup') {
-         //   steps {
-                // Use Kubernetes plugin to set up the connection to EKS
-           //     withKubeConfig(credentialsId: 'K8S', clusterName: 'dev-eks', serverUrl: 'https://7C70E6F46D795C51B2A4A90732E29B22.gr7.us-east-1.eks.amazonaws.com') {
-             //   }
-           // }
-       // }
+        stage('Kubernetes Setup') {
+            steps {
+                # Use Kubernetes plugin to set up the connection to EKS
+                withKubeConfig(credentialsId: 'K8S', clusterName: 'dev-eks', serverUrl: 'https://7C70E6F46D795C51B2A4A90732E29B22.gr7.us-east-1.eks.amazonaws.com') {
+              }
+           }
+        }
         stage('Deploy app in kubernetes') {
             steps {
                 //sh 'kubectl delete ns nginx'
-                sleep 30
+                //sleep 30
                 sh 'kubectl create namespace nginx'
                 sh 'kubectl get ns'
                 
