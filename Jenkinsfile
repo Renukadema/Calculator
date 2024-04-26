@@ -46,7 +46,7 @@ pipeline {
         }
         stage('Deploy app in kubernetes') {
             steps {
-                sh 'kubectl delete ns nginx'
+                //sh 'kubectl delete ns nginx'
                 sleep 30
                 sh 'kubectl create namespace nginx'
                 sh 'kubectl get ns'
