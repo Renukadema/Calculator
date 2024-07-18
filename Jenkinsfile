@@ -47,7 +47,8 @@ pipeline {
                     withAWS(credentials: 'aws_config') {
                         // Update kubeconfig to connect to the EKS cluster
                         sh "aws eks update-kubeconfig --name demo-eks --region us-east-1"
-                        sleep 10
+                        sh "kubectl delete ns gmail"
+                        sleep 5
                         sh "kubectl create ns gmail"
                         sleep 5
                         sh "kubectl get ns"
