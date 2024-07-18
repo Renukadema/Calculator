@@ -79,8 +79,6 @@ pipeline {
                         sh "aws eks update-kubeconfig --name demo-eks --region us-east-1"
                         sh "kubectl get nodes"
                         sh "kubectl get all -n gmail"
-                        sh "kubectl delete ns test"
-                        sh "kubectl delete ns facebook"
                     }
                 }
             }
