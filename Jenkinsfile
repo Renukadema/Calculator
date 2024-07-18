@@ -1,18 +1,18 @@
 pipeline {
     agent any
 
-   stages {
-        stage('code checkout') {
+    stages {
+        stage('Checkout Code') {
             steps {
-                // Get some code from a GitHub repository
-                git 'https://github.com/Renukadema/Calculator.git'
+                // Checkout the code from the specified SCM
+                git url: 'https://github.com/Renukadema/Calculator.git', branch: 'master'
             }
         }
-        stage('Maven Build') {
+
+        stage('Build with Maven') {
             steps {
-                
-                // Run Maven on a Unix agent.
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+                // Execute Maven build
+                sh 'mvn clean install'
             }
         }
         stage('SonarQube Analysis') {
@@ -30,47 +30,68 @@ pipeline {
                 '''
             }
         }
-        stage('AWS Authentication') {
+        stage('helm Package') {
             steps {
-                withAWS(region: 'us-east-1', credentials: 'aws-configure') {
-                    sh "aws eks --region us-east-1 update-kubeconfig --name dev-eks"
+                //sh "sudo docker build -t calculator . --file dockerfile"
+                sh '''#!/bin/bash
+                helm create nginx
+                helm lint nginx
+                helm package nginx
+                '''
+            }
+        }
+        stage('Namespace Creation') {
+            steps {
+                script {
+                    // Load AWS credentials from Jenkins
+                    withAWS(credentials: 'aws_config') {
+                        // Update kubeconfig to connect to the EKS cluster
+                        sh "aws eks update-kubeconfig --name demo-eks --region us-east-1"
+                        sleep 10
+                        sh "kubectl create ns gmail"
+                        sleep 5
+                        sh "kubectl get ns"
+                    }
                 }
             }
         }
-        stage('Kubernetes Setup') {
+        stage('Connect to AWS and EKS') {
             steps {
-                //Use Kubernetes plugin to set up the connection to EKS
-                withKubeConfig(credentialsId: 'K8S', clusterName: 'dev-eks', serverUrl: 'https://7C70E6F46D795C51B2A4A90732E29B22.gr7.us-east-1.eks.amazonaws.com') {
-              }
-           }
-        }
-        stage('Deploy app in kubernetes') {
-            steps {
-                //sh 'kubectl delete ns nginx'
-                //sleep 30
-                //sh 'kubectl create namespace nginx'
-                //sh 'kubectl get ns'
-                
-                // Add Helm repository if necessary
-                sh 'kubectl apply -f deployment.yaml'
-                
-                // Install Helm chart
-                sh 'kubectl apply -f service.yaml'
-                
-                sh 'kubectl apply -f nginx-loadbalancer.yaml'
-                
+                script {
+                    // Load AWS credentials from Jenkins
+                    withAWS(credentials: 'aws_config') {
+                        // Update kubeconfig to connect to the EKS cluster
+                        sh "aws eks update-kubeconfig --name demo-eks --region us-east-1"
+                        sh "kubectl apply -f deployment.yaml -n gmail"
+                        sh "kubectl apply -f nginx-loadbalancer.yaml -n gmail"
+                    }
+                }
             }
         }
-        stage('verify') {
+        
+        stage('Verify Application Deploy') {
             steps {
-                // display the cluster nodes
-                sh 'kubectl get nodes'
-                
-                // disply the deployed pods
-                sh 'kubectl get pods'
-                
-                sh 'kubectl get svc'
+                script {
+                    // Load AWS credentials from Jenkins
+                    withAWS(credentials: 'aws_config') {
+                        // Update kubeconfig to connect to the EKS cluster
+                        sh "aws eks update-kubeconfig --name demo-eks --region us-east-1"
+                        sh "kubectl get nodes"
+                        sh "kubectl get all -n gmail"
+                        sh "kubectl delete ns test"
+                        sh "kubectl delete ns facebook"
+                    }
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed.'
         }
     }
 }
